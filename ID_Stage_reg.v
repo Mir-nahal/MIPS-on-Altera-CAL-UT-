@@ -12,6 +12,8 @@ module ID_Stage_reg
 		input mem_r_en_in,
 		input mem_w_en_in,
 		input wb_en_in,
+		input[4:0] src1_in,
+		input[4:0] fw_src2_in,
 		output reg[4:0] dest,
 		output reg[31:0] reg2,
 		output reg[31:0] val2,
@@ -21,7 +23,9 @@ module ID_Stage_reg
 		output reg[3:0] exe_cmd,
 		output reg mem_r_en,
 		output reg mem_w_en,
-		output reg wb_en
+		output reg wb_en,
+		output reg[4:0] src1,
+		output reg[4:0] fw_src2
 	);
 
 	always @(posedge clk) begin
@@ -36,6 +40,8 @@ module ID_Stage_reg
 			mem_r_en <= 1'b0;
 			mem_w_en <= 1'b0;
 			wb_en <= 1'b0;
+			src1 <= 5'b0;
+			fw_src2 <= 5'b0;
 		end
 		else begin
 			dest <= dest_in;
@@ -48,6 +54,8 @@ module ID_Stage_reg
 			mem_r_en <= mem_r_en_in;
 			mem_w_en <= mem_w_en_in;
 			wb_en <= wb_en_in;
+			src1 <= src1_in;
+			fw_src2 <= fw_src2_in;
 		end
 	end
 	

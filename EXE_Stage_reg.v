@@ -9,6 +9,11 @@ module EXE_stage_reg
 		input[31:0] alu_result_in,
 		input[31:0] st_val_in,
 		input[31:0] dest_in,
+		
+		input[1:0] st_val_decider,
+		input[31:0] mem_alu_result,
+		input[31:0] wb_result_wb,
+		
 		output reg wb_en,
 		output reg mem_r_en,
 		output reg mem_w_en,
@@ -17,6 +22,13 @@ module EXE_stage_reg
 		output reg[31:0] st_val,
 		output reg[31:0] dest
 	);
+	
+	wire[31:0] air;
+	wire[31:0] choosen_st_val;
+	
+	mux_32bit_4to1 st_val_mux
+		(st_val_in, mem_alu_result, wb_result_wb, air,
+		st_val_decider, choosen_st_val);
 
 	always @(posedge clk) begin
 		if (rst) begin
@@ -34,7 +46,7 @@ module EXE_stage_reg
 			mem_w_en <= mem_w_en_in;
 			pc <= pc_in;
 			alu_result <= alu_result_in;
-			st_val <= st_val_in;
+			st_val <= choosen_st_val;
 			dest <= dest_in;
 		end
 	end

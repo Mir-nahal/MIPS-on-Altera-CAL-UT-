@@ -12,6 +12,10 @@ module mips(
 
 	wire oHD_detected;
 	
+	wire[1:0] oFW_src1_decider;
+	wire[1:0] oFW_src2_decider;
+	wire[1:0] oFW_ST_Val_decider;
+	
 	wire[31:0] oIF_pc;
 	wire[31:0] oIF_instruction;
 	IF_Stage i_fetch
@@ -49,9 +53,10 @@ module mips(
 	wire oID_mem_w_en;
 	wire oID_wb_en;
 	wire[4:0] oID_src1;
-	wire[4:0] oID_src2;
+	wire[4:0] oID_selected_src2;
 	wire oID_is_immediate;
 	wire oID_st_or_bne;
+	wire[4:0] oID_fw_src2;
 	ID_Stage i_decode
 	(
 		clk,
@@ -63,7 +68,7 @@ module mips(
 		oRegFile_reg2,
 		// To RegFile
 		oID_src1,
-		oID_src2,
+		oID_selected_src2,
 		// TO ID_Stage_reg
 		oID_dest,
 		oID_reg2,
@@ -77,7 +82,9 @@ module mips(
 		//
 		oID_wb_en,
 		oID_is_immediate,
-		oID_st_or_bne
+		oID_st_or_bne,
+		// for forawrding
+		oID_fw_src2
 	);
 
 	wire[4:0] oIDReg_dest;
@@ -90,6 +97,8 @@ module mips(
 	wire oIDReg_mem_r_en;
 	wire oIDReg_mem_w_en;
 	wire oIDReg_wb_en;
+	wire[4:0] oIDReg_src1;
+	wire[4:0] oIDReg_fw_src2;
 	ID_Stage_reg i_decode_reg
 	(
 		clk,
@@ -104,6 +113,8 @@ module mips(
 		oID_mem_r_en,
 		oID_mem_w_en & ~oHD_detected,
 		oID_wb_en & ~oHD_detected,
+		oID_src1,
+		oID_fw_src2,
 		oIDReg_dest,
 		oIDReg_reg2,
 		oIDReg_val2,
@@ -113,7 +124,9 @@ module mips(
 		oIDReg_exe_cmd,
 		oIDReg_mem_r_en,
 		oIDReg_mem_w_en,
-		oIDReg_wb_en
+		oIDReg_wb_en,
+		oIDReg_src1,
+		oIDReg_fw_src2
 	);
 
 	wire[31:0] oEXE_alu_result;
@@ -123,6 +136,12 @@ module mips(
 		oIDReg_exe_cmd,
 		oIDReg_val1,
 		oIDReg_val2,
+		
+		oEXEReg_alu_result,
+		oWB_Write_value,
+		
+		oFW_src1_decider,
+		oFW_src2_decider,
 		
 		oEXE_alu_result
 	);
@@ -145,6 +164,11 @@ module mips(
 		oEXE_alu_result,
 		oIDReg_reg2,
 		oIDReg_dest,
+		
+		oFW_ST_Val_decider,
+		oEXEReg_alu_result,
+		oWB_Write_value,
+		
 		oEXEReg_wb_en,
 		oEXEReg_mem_r_en,
 		oEXEReg_mem_w_en,
@@ -220,7 +244,7 @@ module mips(
 		clk,
 		rst,
 		oID_src1,
-		oID_src2,
+		oID_selected_src2,
 		oWB_Dest,
 		oWB_Write_value,
 		oWB_WB_en,
@@ -231,7 +255,7 @@ module mips(
 	
 	hazard_Detection_Unit i_HD(
 		oID_src1,
-		oID_src2,
+		oID_selected_src2,
 		oIDReg_dest,
 		oIDReg_wb_en,
 		oEXEReg_dest,
@@ -241,6 +265,21 @@ module mips(
 		oID_st_or_bne,
 		
 		oHD_detected
+	);
+	
+	forwarding_Unit i_FW(
+		oIDReg_src1,
+		oIDReg_fw_src2,
+		oIDReg_dest,
+		oIDReg_mem_w_en,
+		oEXEReg_wb_en,
+		oEXEReg_dest,
+		oWB_Dest,
+		oWB_WB_en,
+		
+		oFW_src1_decider,
+		oFW_src2_decider,
+		oFW_ST_Val_decider
 	);
 	
 	assign d_fetch = oIFReg_pc;

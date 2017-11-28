@@ -9,7 +9,7 @@ module ID_Stage
 		input[31:0] reg2val,
 		// To RegFile
 		output[4:0] src1,
-		output[4:0] src2,
+		output[4:0] selected_src2,
 		// TO ID_Stage_reg
 		output[4:0] dest,
 		output[31:0] reg2,
@@ -24,6 +24,8 @@ module ID_Stage
 		output wb_en,
 		output is_immediate,
 		output st_or_bne
+		// for forwarding
+		output[4:0] fw_src2
 	);
 	
 	wire[1:0] br_type;
@@ -67,7 +69,7 @@ module ID_Stage
 		instruction[15:11],
 		instruction[25:21],
 		st_or_bne,
-		src2
+		selected_src2
 	);
 
 	assign br_taken = is_branch & o_condition_check;
@@ -76,4 +78,6 @@ module ID_Stage
 	assign dest = instruction[25:21];
 	assign reg2 = reg2val;
 	assign val1 = reg1val;
+	
+	assign fw_src2 = is_immediate ? instruction[15:11] : 5'd0;
 endmodule

@@ -18,12 +18,12 @@ module EXE_stage
 	wire[31:0] decided_src2;
 	wire[31:0] air;
 	
-	mux_32bit_4to1 src1_decider(
+	mux_32bit_4to1 src1_decider_mux(
 		val1, mem_alu_result, wb_result_wb, air, 
 		src1_decider, 
 		decided_src1);
 		
-	mux_32bit_4to1 src1_decider(
+	mux_32bit_4to1 src2_decider_mux(
 		val2, mem_alu_result, wb_result_wb, air, 
 		src2_decider, 
 		decided_src2);

@@ -1,7 +1,7 @@
 module forwarding_Unit(
 		input[4:0] src1,
 		input[4:0] src2,
-		input[4:0] ST_Src,
+		input[4:0] ST_src,
 		input EXE_MEM_W_EN,
 		input MEM_MEM_WB_EN,
 		input[4:0] MEM_Dest,

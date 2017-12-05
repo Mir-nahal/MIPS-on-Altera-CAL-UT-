@@ -55,7 +55,7 @@ module mips(
 	wire[4:0] oID_src1;
 	wire[4:0] oID_selected_src2;
 	wire oID_is_immediate;
-	wire oID_st_or_bne;
+	wire[1:0] oID_br_type;
 	wire[4:0] oID_fw_src2;
 	ID_Stage i_decode
 	(
@@ -82,7 +82,7 @@ module mips(
 		//
 		oID_wb_en,
 		oID_is_immediate,
-		oID_st_or_bne,
+		oID_br_type,
 		// for forawrding
 		oID_fw_src2
 	);
@@ -262,7 +262,7 @@ module mips(
 		oEXEReg_mem_r_en,
 		
 		oID_is_immediate,
-		oID_st_or_bne,
+		oID_br_type,
 		
 		oHD_detected
 	);

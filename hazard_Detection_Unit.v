@@ -7,7 +7,7 @@ module hazard_Detection_Unit(
 	input Mem_MEM_R,
 	
 	input is_immediate,
-	input st_or_bne,
+	input[1:0] br_type,
 	
 	output hazard_Detected
 );
@@ -33,7 +33,7 @@ always@(*) begin
 			if (src1 == Exe_Dest)
 				hazard_reg = 1;
 			
-			if (st_or_bne) begin
+			if (br_type == 2'b01) begin // if branch not equal
 				if (src2 == Exe_Dest)
 					hazard_reg = 1;
 			end
@@ -43,7 +43,7 @@ always@(*) begin
 //			if (src1 == Mem_Dest)
 //				hazard_reg = 1;
 			
-			if (st_or_bne) begin
+			if (br_type == 2'b00 || br_type == 2'b01) begin // if branch not equal or branch zero
 				if (src2 == Mem_Dest)
 					hazard_reg = 1;
 			end

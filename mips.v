@@ -257,9 +257,9 @@ module mips(
 		oID_src1,
 		oID_selected_src2,
 		oIDReg_dest,
-		oIDReg_mem_r_en,
+		oIDReg_wb_en,
 		oEXEReg_dest,
-		oEXEReg_mem_r_en,
+		oEXEReg_wb_en,
 		
 		oID_is_immediate,
 		oID_br_type,

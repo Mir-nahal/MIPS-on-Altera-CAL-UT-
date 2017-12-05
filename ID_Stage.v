@@ -79,5 +79,5 @@ module ID_Stage
 	assign reg2 = reg2val;
 	assign val1 = reg1val;
 	
-	assign fw_src2 = is_immediate ? instruction[15:11] : 5'd0;
+	assign fw_src2 = is_immediate ? 5'd0 : instruction[15:11];
 endmodule

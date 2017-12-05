@@ -16,7 +16,7 @@ module EXE_stage
 	
 	wire[31:0] decided_src1;
 	wire[31:0] decided_src2;
-	wire[31:0] air;
+	reg[31:0] air = 32'b0;
 	
 	mux_32bit_4to1 src1_decider_mux(
 		val1, mem_alu_result, wb_result_wb, air, 

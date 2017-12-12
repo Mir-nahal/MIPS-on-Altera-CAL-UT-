@@ -11,7 +11,7 @@ module IF_Stage
 	wire [31:0] adder_to_pc;
 	wire [31:0] instr_out;
 	
-	pc_adder i_pc_adder(freez ? 32'd0 : (br_taken == 0 ? 32'd4 : ((br_offset << 2) - 32'd4)), pc, adder_to_pc);
+	pc_adder i_pc_adder(freez ? 32'd0 : (br_taken == 0 ? 32'd4 : (br_offset << 2)), pc, adder_to_pc);
 	pc i_pc(rst, clk, adder_to_pc, pc);
 	instruction_memory i_instruction_memory(pc, instruction);	
 endmodule

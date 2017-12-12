@@ -8,9 +8,8 @@ module mips(
 	output[31:0] d_write_back);
 
 	wire IF_flush;
-	assign IF_flush = oIDReg_br_taken | oID_br_taken;
-
 	wire oHD_detected;
+	assign IF_flush = oHD_detected ? 1'b0 : oIDReg_br_taken | oID_br_taken;
 	
 	wire[1:0] oFW_src1_decider;
 	wire[1:0] oFW_src2_decider;
@@ -56,6 +55,7 @@ module mips(
 	wire[4:0] oID_selected_src2;
 	wire oID_is_immediate;
 	wire[1:0] oID_br_type;
+	wire oID_is_branch;
 	wire[4:0] oID_fw_src2;
 	ID_Stage i_decode
 	(
@@ -83,6 +83,7 @@ module mips(
 		oID_wb_en,
 		oID_is_immediate,
 		oID_br_type,
+		oID_is_branch,
 		// for forawrding
 		oID_fw_src2
 	);
@@ -107,10 +108,10 @@ module mips(
 		oID_reg2,
 		oID_val2,
 		oID_val1,
-		oIFReg_pc,
+		oHD_detected ? 32'b0 : oIFReg_pc,
 		oID_br_taken & ~oHD_detected,
-		oID_exe_cmd,
-		oID_mem_r_en,
+		oHD_detected ? 4'b0 : oID_exe_cmd,
+		oID_mem_r_en & ~oHD_detected,
 		oID_mem_w_en & ~oHD_detected,
 		oID_wb_en & ~oHD_detected,
 		oID_src1,
@@ -258,10 +259,12 @@ module mips(
 		oID_selected_src2,
 		oIDReg_dest,
 		oIDReg_wb_en,
+		oIDReg_mem_r_en,
 		oEXEReg_dest,
 		oEXEReg_wb_en,
 		
 		oID_is_immediate,
+		oID_is_branch,
 		oID_br_type,
 		
 		oHD_detected

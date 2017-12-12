@@ -24,12 +24,13 @@ module ID_Stage
 		output wb_en,
 		output is_immediate,
 		output[1:0] br_type,
+		output is_branch,
 		// for forwarding
 		output[4:0] fw_src2
 	);
 	
 //	wire[1:0] br_type;
-	wire is_branch;
+//	wire is_branch;
 //	wire is_immediate;
 	wire st_or_bne;
 	control_unit i_control_unit(

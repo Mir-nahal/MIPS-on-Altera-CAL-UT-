@@ -33,11 +33,11 @@ always@(*) begin
 		end		
 	end
 	
-	if (is_branch == 1 && br_type != 2'b10) begin // currenct instr is BEZ or BNE
-		if (Exe_WB && (src1 == Exe_Dest || src2 == Exe_Dest) && src2 != 5'd0) begin
+	if (is_branch == 1) begin // currenct instr is BEZ or BNE
+		if (Exe_WB && (src1 == Exe_Dest || src2 == Exe_Dest)) begin
 			hazard_reg = 1;
 		end
-		if (Mem_WB && (src1 == Mem_Dest || src2 == Mem_Dest) && src2 != 5'd0) begin
+		if (Mem_WB && (src1 == Mem_Dest || src2 == Mem_Dest)) begin
 			hazard_reg = 1;
 		end
 	end

@@ -23,6 +23,12 @@ module SRAM_Controller(
 	reg[15:0] second_part;
 	
 	always @(posedge clk) begin
+		if (rst) begin
+			counter = 2'b0;
+			first_part = 16'd0;
+			second_part = 16'd0;
+		end
+	
 		if (SRAM_re_en || SRAM_we_en) begin
 			counter = counter + 2'b01;
 		end
@@ -30,21 +36,27 @@ module SRAM_Controller(
 			counter = 2'b0;
 		end
 		
-		first_part = (SRAM_re_en && counter == 2'b0) ? SRAM_DATA : first_part;
-		second_part = (SRAM_re_en && counter == 2'b01) ? SRAM_DATA : second_part;
+		if (SRAM_re_en) begin
+			if (counter == 2'b00) begin
+				first_part = SRAM_DATA;
+			end
+			if (counter == 2'b01) begin
+				second_part = SRAM_DATA;
+			end
+		end
 	end
 	
-	assign SRAM_WE_N_O = (SRAM_we_en && (counter == 2'b0 || counter == 2'b01));
+	assign SRAM_WE_N_O = ~(SRAM_we_en && (counter == 2'b0 || counter == 2'b01));
 	
-	assign SRAM_ADDRESS = SRAM_address;
+	assign SRAM_ADDRESS = ((SRAM_re_en || SRAM_we_en) && counter == 2'b01) ? (SRAM_address + 18'd1) : SRAM_address;
 	
 	assign SRAM_DATA = (SRAM_we_en && counter == 2'b0) ? SRAM_write_data[15:0] :
 				(SRAM_we_en && counter == 2'b01) ? SRAM_write_data[31:16]:
 				32'bZ;
 
-	assign SRAM_read_data = {second_part, second_part};
+	assign SRAM_read_data = {first_part, second_part};
 
-	assign ready = (SRAM_we_en || SRAM_re_en) && counter != 2'b11 ? 0 : 1;
+	assign ready = ((SRAM_we_en || SRAM_re_en) && counter != 2'b11) ? 0 : 1;
 
 	assign SRAM_UB_N_O = 0;
 	assign SRAM_LB_N_O = 0;

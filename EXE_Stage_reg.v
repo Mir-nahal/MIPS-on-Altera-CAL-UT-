@@ -2,6 +2,7 @@ module EXE_stage_reg
 	(
 		input clk,
 		input rst,
+		input freez,
 		input wb_en_in,
 		input mem_r_en_in,
 		input mem_w_en_in,
@@ -40,7 +41,7 @@ module EXE_stage_reg
 			st_val <= 32'b0;
 			dest <= 32'b0;
 		end
-		else begin
+		else if (freez == 0)begin
 			wb_en <= wb_en_in;
 			mem_r_en <= mem_r_en_in;
 			mem_w_en <= mem_w_en_in;

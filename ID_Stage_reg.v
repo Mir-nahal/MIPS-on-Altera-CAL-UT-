@@ -2,6 +2,7 @@ module ID_Stage_reg
 	(
 		input clk,
 		input rst,
+		input freez,
 		input[4:0] dest_in,
 		input[31:0] reg2_in,
 		input[31:0] val2_in,
@@ -43,7 +44,7 @@ module ID_Stage_reg
 			src1 <= 5'b0;
 			fw_src2 <= 5'b0;
 		end
-		else begin
+		else if (freez == 0) begin
 			dest <= dest_in;
 			reg2 <= reg2_in;
 			val2 <= val2_in;

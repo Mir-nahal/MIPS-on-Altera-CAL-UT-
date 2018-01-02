@@ -5,10 +5,18 @@ module mips(
 	output[31:0] d_decode,
 	output[31:0] d_execute,
 	output[31:0] d_memory,
-	output[31:0] d_write_back);
+	output[31:0] d_write_back,
+	inout [15:0] o_mips_SRAM_DATA, 
+	output [17:0] o_mips_SRAM_ADDRESS,
+	output o_mips_SRAM_UB_N_O,
+	output o_mips_SRAM_LB_N_O,
+	output o_mips_SRAM_WE_N_O,
+	output o_mips_SRAM_CE_N_O,
+	output o_mips_SRAM_OE_N_O);
 
 	wire IF_flush;
 	wire oHD_detected;
+	wire oMEM_ready;
 	assign IF_flush = oHD_detected ? 1'b0 : oIDReg_br_taken | oID_br_taken;
 	
 	wire[1:0] oFW_src1_decider;
@@ -21,7 +29,7 @@ module mips(
 	(
 		clk,
 		rst,
-		oHD_detected,
+		oHD_detected | ~oMEM_ready,
 		oIDReg_br_taken,
 		oIDReg_val2,
 		oIF_pc,
@@ -35,7 +43,7 @@ module mips(
 		clk,
 		rst,
 		IF_flush,
-		oHD_detected,
+		oHD_detected | ~oMEM_ready,
 		oIF_pc,
 		oIF_instruction,
 		oIFReg_pc,
@@ -104,6 +112,7 @@ module mips(
 	(
 		clk,
 		rst,
+		~oMEM_ready,
 		oID_dest,
 		oID_reg2,
 		oID_val2,
@@ -158,6 +167,7 @@ module mips(
 	(
 		clk,
 		rst,
+		~oMEM_ready,
 		oIDReg_wb_en,
 		oIDReg_mem_r_en,
 		oIDReg_mem_w_en,
@@ -184,6 +194,7 @@ module mips(
 	MEM_stage i_mem
 	(
 		clk,
+		rst,
 		//MEM_signals
 		oEXEReg_mem_r_en,
 		oEXEReg_mem_w_en,
@@ -192,7 +203,16 @@ module mips(
 		oEXEReg_st_val,
 		
 		//MEM_signals
-		oMEM_mem_read_value
+		oMEM_mem_read_value,
+		oMEM_ready,
+		
+		o_mips_SRAM_DATA, 
+		o_mips_SRAM_ADDRESS,
+		o_mips_SRAM_UB_N_O,
+		o_mips_SRAM_LB_N_O,
+		o_mips_SRAM_WE_N_O,
+		o_mips_SRAM_CE_N_O,
+		o_mips_SRAM_OE_N_O
 	);
 
 	wire oMEMReg_WB_en;
@@ -204,6 +224,7 @@ module mips(
 	(
 		clk,
 		rst,
+		~oMEM_ready,
 		oEXEReg_wb_en,
 		//MEM_signals
 		oEXEReg_mem_r_en,

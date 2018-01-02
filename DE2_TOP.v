@@ -318,7 +318,22 @@ wire[31:0] d_execute;
 wire[31:0] d_memory;
 wire[31:0] d_write_back;
 
-mips i_mips(SW[1], mips_clk, d_fetch, d_decode, d_execute, d_memory, d_write_back);
+mips i_mips(
+	SW[1], 
+	mips_clk, 
+	d_fetch, 
+	d_decode, 
+	d_execute, 
+	d_memory, 
+	d_write_back,
+	SRAM_DQ,
+	SRAM_ADDR,
+	SRAM_UB_N,
+	SRAM_LB_N,
+	SRAM_WE_N,
+	SRAM_CE_N,
+	SRAM_OE_N
+	);
 
 seven_seg seg_fetch(d_fetch[3:0], HEX0);
 seven_seg seg_decode(d_decode[3:0], HEX1);
